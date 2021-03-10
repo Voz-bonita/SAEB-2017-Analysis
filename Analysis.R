@@ -7,10 +7,6 @@ library(tibble)
 library(readr)
 library(purrr)
 
-setwd("C:/Users/Jose/Desktop/Trabalho1ME2")
-
-
-
 amostra <- read.csv("amostra_190089971.csv")
 
 ############ Questao 3
@@ -18,7 +14,7 @@ amostra <- read.csv("amostra_190089971.csv")
 idade <- amostra$IDADE
 regiao <- amostra$REGIAO
 sexo <- amostra$SEXO
-reunioes <- amostra$REUNIÃ.ES_ESCOLARES
+reunioes <- amostra$REUNIï¿½.ES_ESCOLARES
 biblioteca <- amostra$BIBLIOTECA
 
 amostra_simplificada <- tibble(
@@ -38,7 +34,7 @@ age_hash$E <- "12 anos"
 age_hash$F <- "13 anos"
 age_hash$G <- "14 anos"
 age_hash$H <- "15 anos ou mais"
-age_hash$" " <- "Não informado"
+age_hash$" " <- "Nï¿½o informado"
 
 reg_hash <- hash()
 reg_hash$"1" <- "Norte"
@@ -55,13 +51,13 @@ reu_hash <- hash()
 reu_hash$A <- "Sempre ou quase sempre" 
 reu_hash$B <- "De vez em quando" 
 reu_hash$C <- "Nunca ou quase nunca"
-reu_hash$" " <- "Não informado"
+reu_hash$" " <- "Nï¿½o informado"
 
 bib_hash <- hash()
 bib_hash$A <- "Sempre ou quase sempre"
 bib_hash$B <- "De vez em quando" 
 bib_hash$C <- "Nunca ou quase nunca" 
-bib_hash$D <- "A escola não possui biblioteca ou sala de leitura"
+bib_hash$D <- "A escola nï¿½o possui biblioteca ou sala de leitura"
 
 amostra_simplificada$Idade <- unlist(map(amostra_simplificada$Idade, ~age_hash[[.x]]))
 amostra_simplificada$Regiao <- unlist(map(amostra_simplificada$Regiao, ~reg_hash[[as.character(.x)]]))
@@ -84,7 +80,7 @@ for (nome in categorias) {
 
   simp_tbl <- mutate(as.data.frame(simp_tbl), "Fri" = cumsum(fri))
 
-  names(simp_tbl) <- c(nome, "Frequência absoluta", "Frequência relativa", "Frequência relativa acumulada")
+  names(simp_tbl) <- c(nome, "Frequï¿½ncia absoluta", "Frequï¿½ncia relativa", "Frequï¿½ncia relativa acumulada")
 
   if (nome %in% c("Idade", "Reunioes")) {
     simp_tbl[1,1] <- NA
@@ -100,7 +96,7 @@ for (nome in categorias) {
 
 }
 
-################# Gráficos 
+################# Grï¿½ficos 
 
 for (nome in categorias) {
   print(nome)
@@ -121,13 +117,13 @@ for (nome in categorias) {
                                                    "13 anos",
                                                    "14 anos",
                                                    "15 anos ou mais",
-                                                   "Não informado"), ordered = TRUE)
+                                                   "Nï¿½o informado"), ordered = TRUE)
   }else if (nome == "Reunioes") {
     amostra_grafica$Reunioes = factor(amostra_grafica$Reunioes,
                                       levels = c("Sempre ou quase sempre",
                                                  "De vez em quando",
                                                  "Nunca ou quase nunca",
-                                                 "Não informado"    ))
+                                                 "Nï¿½o informado"    ))
   }
   
   
@@ -142,7 +138,7 @@ for (nome in categorias) {
     plot <- ggplot(data = amostra_grafica, aes(x=get(nome),y=n)) +
       geom_bar(stat="identity") +
       labs(x=nome,
-           y="Frequência") +
+           y="Frequï¿½ncia") +
       coord_flip()
   }
   
@@ -163,12 +159,12 @@ ggplot(data = amostra_grafica, aes(x="", y=n, fill=get(nome))) +
 
 
 
-############# Questão 4
+############# Questï¿½o 4
 
 ##### Preparativos
 
 tipo_notas <- c("NOTA_LP", "NOTA_MT")
-full_label <- c("Língua Portuguesa", "Matemática") 
+full_label <- c("Lï¿½ngua Portuguesa", "Matemï¿½tica") 
 
 medidas <- c()
 
@@ -289,14 +285,14 @@ for (label in tipo_notas) {
   medidas <- c(media,mediana,moda,minimo,maximo,variancia,coeficiente_variacao,coef_assimetria,coef_curtose)
   medidas <- round(medidas, digits=4)
   
-  estatisticas <- c("Media","Mediana","Moda","Mínimo","Maximo","Variancia","Variação","Assimetria","Curtose") 
+  estatisticas <- c("Media","Mediana","Moda","Mï¿½nimo","Maximo","Variancia","Variaï¿½ï¿½o","Assimetria","Curtose") 
   
   dados_res <- data.frame(
-    "Estatística" = estatisticas,
+    "Estatï¿½stica" = estatisticas,
     "Notas" = medidas
   )
   
-  names(classificado)[3:5] <- c("Frequência absoluta", "Frequência relativa", "Frequência relativa acumulada")
+  names(classificado)[3:5] <- c("Frequï¿½ncia absoluta", "Frequï¿½ncia relativa", "Frequï¿½ncia relativa acumulada")
   
   kable(classificado) %>%
     kable_styling("striped") %>%
@@ -312,7 +308,7 @@ for (label in tipo_notas) {
 
     )
 
-  ggplot(data = classificado, aes(y = `Frequência absoluta`)) +
+  ggplot(data = classificado, aes(y = `Frequï¿½ncia absoluta`)) +
     geom_boxplot(fill="#A4A4A4", color="black") +
     scale_x_continuous(breaks = NULL) +
     labs(x = full_label[match(label, tipo_notas)],
@@ -333,7 +329,7 @@ for (label in tipo_notas) {
                    fill="dark blue") +
     scale_x_continuous(breaks = sequencia) +
     labs(x = "Notas",
-         y = "Frequência") +
+         y = "Frequï¿½ncia") +
     ggsave(paste("Q4b-", label, ".png", sep = ""))
 
 }
