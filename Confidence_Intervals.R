@@ -5,10 +5,28 @@
 
 population <- read.csv("SAEB.sample.csv")
 
+CI <- function (data, confidence = 0.95, sd){
+
+  n <- length(data)
+  sample_mean <- mean(data)
+
+  sup_quant <- (1-confidence)/2 + confidence
+  error <- qnorm(sup_quant) * sd/sqrt(n)
+
+  inf_lim <- sample_mean - error
+  sup_lim <- sample_mean + error
+
+  returnValue(c(inf_lim,sup_lim))
+}
+
 n1 <- 30
+max_samples <- 50
 
 samples_30 <- list()
-for (i in 1:50){
+
+set.seed(1234)
+
+for (i in 1:max_samples){
   sample_i <- population[sample(nrow(population), size = n1, replace = FALSE),]
   samples_30[[i]] <- sample_i
 }
@@ -27,17 +45,20 @@ sd_mt <- sqrt(var_mt)
 
 quantile_sup <- qnorm(0.975)
 
-CI <- function (data, confidence = 0.95, sd){
 
-  n <- length(data)
-  sample_mean <- mean(data)
+intervals <- list()
+math_df <- lp_df <- data.frame(matrix(ncol = 3, nrow = max_samples))
+math_df[,1] <- seq(1,max_samples)
+for (i in 1:max_samples){
 
-  sup_quant <- (1-confidence)/2 + confidence
-  error <- qnorm(sup_quant) * sd/sqrt(n)
+  Interval_i <- CI(samples_30[[i]]$NOTA_MT, sd = sd_mt)
+  math_df[i,2:3] <- Interval_i
 
-  inf_lim <- sample_mean - error
-  sup_lim <- sample_mean + error
-
-  returnValue(c(inf_lim,sup_lim))
 }
 
+names(math_df) <- c("Index", "Inf_lim", "Sup_lim")
+
+ggplot(data = math_df, aes(x = `mean_mt`,y = `Index`)) +
+  geom_vline(xintercept=`mean_mt`, linetype="dashed") +
+  geom_errorbar(xmin = math_df$Inf_lim, xmax = math_df$Sup_lim) +
+  xlim(min(math_df$Inf_lim)-5, max(math_df$Sup_lim)+5)
