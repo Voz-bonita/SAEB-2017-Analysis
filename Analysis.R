@@ -7,7 +7,7 @@ library(tibble)
 library(readr)
 library(purrr)
 
-amostra <- read.csv("amostra_190089971.csv")
+amostra <- read.csv("SAEB.sample.csv")
 
 ############ Questao 3
 
