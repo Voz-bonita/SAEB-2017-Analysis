@@ -17,13 +17,14 @@ CI <- function (data, confidence = 0.95, sd, variable = NULL){
 
 
   if (is.character(data[,1])){
-    names(data) <- c("Class")
+    names(data) <- "Class"
     data <- data %>%
       group_by(Class) %>%
       count()
 
 
     sample.prop <- data$n[which(data$Class == variable)]/n
+    sd <- sqrt(sample.prop * (1 - sample.prop) / n)
     error <- qnorm(sup_quant) * sd
 
     inf_lim <- sample.prop - error
