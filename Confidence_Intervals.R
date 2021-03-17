@@ -64,30 +64,69 @@ rm(`sample_i`)
 rm(`sample_j`)
 
 
-math_df <- lp_df <- local_df <- gender_df <- data.frame(matrix(ncol = 3, nrow = max_samples))
+math_df <- lp_df <- local_df <- gender_df <- data.frame(matrix(ncol = 4, nrow = max_samples))
 math_df[,1] <- lp_df[,1] <- local_df[,1] <- gender_df[,1] <- seq(1,max_samples)
 
 
-category <- list()
-category[["NOTA_MT"]] <- list(math_df, mean_mt, var_mt, sd_mt, "")
-category[["NOTA_LP"]] <- list(lp_df, mean_lp, var_lp, sd_lp, "")
-category[["SEXO"]] <- list(gender_df, gender.prop, gender.var, gender.sd, "Female")
-category[["LOCALIZACAO"]] <- list(local_df, local.prop, local.var, local.sd, "Rural")
+category_30 <- list()
+category_30[["NOTA_MT"]] <- list(math_df, mean_mt, var_mt, sd_mt, "")
+category_30[["NOTA_LP"]] <- list(lp_df, mean_lp, var_lp, sd_lp, "")
+category_30[["SEXO"]] <- list(gender_df, gender.prop, gender.var, gender.sd, "Female")
+category_30[["LOCALIZACAO"]] <- list(local_df, local.prop, local.var, local.sd, "Rural")
+
+category_100 <- list()
+category_100[["NOTA_MT"]] <- list(math_df, mean_mt, var_mt, sd_mt, "")
+category_100[["NOTA_LP"]] <- list(lp_df, mean_lp, var_lp, sd_lp, "")
+category_100[["SEXO"]] <- list(gender_df, gender.prop, gender.var, gender.sd, "Female")
+category_100[["LOCALIZACAO"]] <- list(local_df, local.prop, local.var, local.sd, "Rural")
 
 # Calculating Confidence Intervals for each sample
-for (name in names(category)){
-  names(category[[name]]) <- c("Interval_df", "Mean", "Var", "SD", "Main_Variable")
-
+for (name in names(category_30)){
+  names(category_30[[name]]) <- c("Interval_df", "Mean", "Var", "SD", "Main_Variable")
+  names(category_100[[name]]) <- c("Interval_df", "Mean", "Var", "SD", "Main_Variable")
   for (i in 1:max_samples){
-    Interval_i <- CI(samples_30[[i]][name], sd = category[[name]]$SD, variable = category[[name]]$Main_Variable)
-    category[[name]]$Interval_df[i,2:3] <- Interval_i
+    Interval_i <- CI(samples_30[[i]][name], sd = category_30[[name]]$SD, variable = category_30[[name]]$Main_Variable)
+    category_30[[name]]$Interval_df[i,2:3] <- Interval_i
+    category_30[[name]]$Interval_df[i,4] <- between(category_30[[name]]$Mean, Interval_i[1], Interval_i[2])
   }
 
-  names(category[[name]]$Interval_df) <- c("Index", "Inf_lim", "Sup_lim")
+  for (i in 1:max_samples){
+    Interval_i <- CI(samples_100[[i]][name], sd = category_100[[name]]$SD, variable = category_100[[name]]$Main_Variable)
+    category_100[[name]]$Interval_df[i,2:3] <- Interval_i
+    category_100[[name]]$Interval_df[i,4] <- between(category_100[[name]]$Mean, Interval_i[1], Interval_i[2])
+  }
+
+  names(category_30[[name]]$Interval_df) <- c("Index", "Inf_lim", "Sup_lim", "Contido")
+  names(category_100[[name]]$Interval_df) <- c("Index", "Inf_lim", "Sup_lim", "Contido")
 }
 
+for (name in names(category_30)){
+  # Calculating xaxis lmits
+  extreme_inf <- min(category_30[[name]]$Interval_df$Inf_lim)
+  extreme_sup <- max(category_30[[name]]$Interval_df$Sup_lim)
+  
+  ggplot(data = category_30[[name]]$Interval_df, aes(x = category_30[[name]]$Mean, y = `Index`, color=`Contido`)) +
+    geom_vline(xintercept=category_30[[name]]$Mean, linetype="dashed") +
+    geom_errorbar(xmin = category_30[[name]]$Interval_df$Inf_lim,
+                  xmax = category_30[[name]]$Interval_df$Sup_lim) +
+    xlim(extreme_inf - abs(extreme_inf)/10, abs(extreme_sup + extreme_sup/10)) +
+    labs(x = name) +
+    theme_classic() +
+    ggsave(paste0(name, "-30.png"))
+}
 
-ggplot(data = category[[name]]$Interval_df, aes(x = category[[name]]$Mean,y = `Index`)) +
-  geom_vline(xintercept=category[[name]]$Mean, linetype="dashed") +
-  geom_errorbar(xmin = category[[name]]$Interval_df$Inf_lim, xmax = category[[name]]$Interval_df$Sup_lim) +
-  xlim(min(category[[name]]$Interval_df$Inf_lim)-0.1, max(category[[name]]$Interval_df$Sup_lim)+0.1)
+for (name in names(category_100)){
+  extreme_inf <- min(category_100[[name]]$Interval_df$Inf_lim)
+  extreme_sup <- max(category_100[[name]]$Interval_df$Sup_lim)
+
+
+  ggplot(data = category_100[[name]]$Interval_df, aes(x = category_100[[name]]$Mean, y = `Index`, color=`Contido`)) +
+    geom_vline(xintercept=category_100[[name]]$Mean, linetype="dashed") +
+    geom_errorbar(xmin = category_100[[name]]$Interval_df$Inf_lim,
+                  xmax = category_100[[name]]$Interval_df$Sup_lim) +
+    xlim(extreme_inf - abs(extreme_inf)/10, abs(extreme_sup + extreme_sup/10)) +
+    labs(x = name) +
+    theme_classic() +
+    ggsave(paste0(name, "-100.png"))
+}
+
