@@ -7,6 +7,21 @@ library(ggplot2)
 
 # population <- read.csv("SAEB.sample.csv")
 
+# Hash that changes variable names into proper variable names when graphing
+name_hash <- function(name){
+  if (name == "SEXO") {
+    returnValue("Proporção de alunos do sexo feminio")
+  } else if (name == "LOCALIZACAO") {
+    returnValue("Proporção de alunos cuja escola está situada em área rural")
+  } else if (name == "NOTA_LP"){
+    returnValue("Nota em Língua Portuguesa")
+  } else if (name == "NOTA_MT") {
+    returnValue("Nota em Matemática")
+  } else {
+    returnValue(name)
+  }
+}
+
 CI <- function (data, confidence = 0.95, sd, variable = NULL){
 
   data <- as.data.frame(data)
@@ -110,7 +125,7 @@ for (name in names(category_30)){
     geom_errorbar(xmin = category_30[[name]]$Interval_df$Inf_lim,
                   xmax = category_30[[name]]$Interval_df$Sup_lim) +
     xlim(extreme_inf - abs(extreme_inf)/10, abs(extreme_sup + extreme_sup/10)) +
-    labs(x = name) +
+    labs(x = name_hash(name)) +
     theme_classic() +
     ggsave(paste0(name, "-30.png"))
 }
@@ -125,7 +140,7 @@ for (name in names(category_100)){
     geom_errorbar(xmin = category_100[[name]]$Interval_df$Inf_lim,
                   xmax = category_100[[name]]$Interval_df$Sup_lim) +
     xlim(extreme_inf - abs(extreme_inf)/10, abs(extreme_sup + extreme_sup/10)) +
-    labs(x = name) +
+    labs(x = name_hash(name)) +
     theme_classic() +
     ggsave(paste0(name, "-100.png"))
 }
