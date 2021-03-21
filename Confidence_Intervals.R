@@ -104,7 +104,7 @@ for (name in names(category_30)){
   # Calculating xaxis lmits
   extreme_inf <- min(category_30[[name]]$Interval_df$Inf_lim)
   extreme_sup <- max(category_30[[name]]$Interval_df$Sup_lim)
-  
+
   ggplot(data = category_30[[name]]$Interval_df, aes(x = category_30[[name]]$Mean, y = `Index`, color=`Contido`)) +
     geom_vline(xintercept=category_30[[name]]$Mean, linetype="dashed") +
     geom_errorbar(xmin = category_30[[name]]$Interval_df$Inf_lim,
