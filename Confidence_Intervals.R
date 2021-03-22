@@ -7,12 +7,21 @@ library(ggplot2)
 
 # population <- read.csv("SAEB.sample.csv")
 
+# Hash that change boolena into Brazilian portuguese names
+boolean_hash <- function (boolean) {
+  if (boolean) {
+    returnValue("Sim")
+  } else {
+    returnValue("Não")
+  }
+}
+
 # Hash that changes variable names into proper variable names when graphing
 name_hash <- function(name){
   if (name == "SEXO") {
     returnValue("Proporção de alunos do sexo feminio")
   } else if (name == "LOCALIZACAO") {
-    returnValue("Proporção de alunos cuja escola está situada em área rural")
+    returnValue("Proporção de alunas (Sexo feminino)")
   } else if (name == "NOTA_LP"){
     returnValue("Nota em Língua Portuguesa")
   } else if (name == "NOTA_MT") {
@@ -102,13 +111,13 @@ for (name in names(category_30)){
   for (i in 1:max_samples){
     Interval_i <- CI(samples_30[[i]][name], sd = category_30[[name]]$SD, variable = category_30[[name]]$Main_Variable)
     category_30[[name]]$Interval_df[i,2:3] <- Interval_i
-    category_30[[name]]$Interval_df[i,4] <- between(category_30[[name]]$Mean, Interval_i[1], Interval_i[2])
+    category_30[[name]]$Interval_df[i,4] <- boolean_hash(between(category_30[[name]]$Mean, Interval_i[1], Interval_i[2]))
   }
 
   for (i in 1:max_samples){
     Interval_i <- CI(samples_100[[i]][name], sd = category_100[[name]]$SD, variable = category_100[[name]]$Main_Variable)
     category_100[[name]]$Interval_df[i,2:3] <- Interval_i
-    category_100[[name]]$Interval_df[i,4] <- between(category_100[[name]]$Mean, Interval_i[1], Interval_i[2])
+    category_100[[name]]$Interval_df[i,4] <- boolean_hash(between(category_100[[name]]$Mean, Interval_i[1], Interval_i[2]))
   }
 
   names(category_30[[name]]$Interval_df) <- c("Index", "Inf_lim", "Sup_lim", "Contido")
@@ -126,6 +135,7 @@ for (name in names(category_30)){
                   xmax = category_30[[name]]$Interval_df$Sup_lim) +
     xlim(extreme_inf - abs(extreme_inf)/10, abs(extreme_sup + extreme_sup/10)) +
     labs(x = name_hash(name)) +
+    guides(color=guide_legend(title="Contém a média\nou proporção\noriginal")) +
     theme_classic() +
     ggsave(paste0(name, "-30.png"))
 }
@@ -141,6 +151,7 @@ for (name in names(category_100)){
                   xmax = category_100[[name]]$Interval_df$Sup_lim) +
     xlim(extreme_inf - abs(extreme_inf)/10, abs(extreme_sup + extreme_sup/10)) +
     labs(x = name_hash(name)) +
+    guides(color=guide_legend(title="Contém a média\nou proporção\noriginal")) +
     theme_classic() +
     ggsave(paste0(name, "-100.png"))
 }
