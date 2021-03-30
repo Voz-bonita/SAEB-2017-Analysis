@@ -9,6 +9,9 @@ library(EnvStats)
 
 set.seed(1234)
 
+source("Pop2000_data.R")
+source("Confidence_Intervals.R")
+
 sample30 <- samples_30[[sample(length(samples_30),1)]]
 sample100 <- samples_100[[sample(length(samples_100),1)]]
 
@@ -48,7 +51,7 @@ notas <- sample100["NOTA_MT"]
 classified <- classification(notas)
 
 Freq_dist <- tibble(
-  Classes = contado) %>%
+  Classes = classified) %>%
   group_by(Classes) %>%
   count(Classes) %>%
   mutate(fri = n/nrow(sample100)) %>%
@@ -64,11 +67,41 @@ peso_medio <- c(125/2) %>%
   append(seq(137.5, 362.5, 25))
 peso_medio_ajustado <- peso_medio[1:nrow(Freq_dist)]
 
-Freq_dist <- add_column(classificado, peso_medio_ajustado, .before = "fi")
+Freq_dist <- add_column(Freq_dist, peso_medio_ajustado, .before = "fi")
 
 names(Freq_dist)[2] <- "Mid_W"
 
-Chisq <- EnvStats::gofTest(Freq_dist$fi, test = "chisq")
-Shapiro <- EnvStats::gofTest(Freq_dist$fi, test = "sw")
-Lillie <- EnvStats::gofTest(Freq_dist$fi, test = "lillie", distribution = "norm")
-Anderson <- EnvStats::gofTest(Freq_dist$fi, test = "ad")
+mean <- sum((Freq_dist$fi*Freq_dist$Mid_W))/100
+var <- sum((Freq_dist$fi*(Freq_dist$Mid_W-193.25)^2))/99
+sd <- sqrt(var)
+
+inf_lim <- c(0) %>%
+  append(seq(125, 300, 25))
+
+sup_lim <- seq(125, 350, 25)
+
+Freq_dist <- Freq_dist %>%
+  mutate(inf_lim = inf_lim,
+         sup_lim = sup_lim,
+         probs = pnorm(sup_lim, mean = mean, sd = sd)-pnorm(inf_lim, mean = mean, sd = sd),
+         esp = probs*100,
+         chisq = (fi-esp)^2/esp)
+
+
+Freq_dist$probs[nrow(Freq_dist)] <- Freq_dist$probs[nrow(Freq_dist)] + 1-sum(Freq_dist$probs)
+
+Freq_dist
+
+
+################# Question 2
+
+LP <- sample30$NOTA_LP
+Shapiro_LP <- EnvStats::gofTest(LP, test = "sw")
+Lillie_LP <- EnvStats::gofTest(LP, test = "lillie", distribution = "norm")
+Anderson_LP <- EnvStats::gofTest(LP, test = "ad")
+
+
+MT <- sample30$NOTA_MT
+Shapiro_MT <- EnvStats::gofTest(LP, test = "sw")
+Lillie_MT <- EnvStats::gofTest(LP, test = "lillie", distribution = "norm")
+Anderson_MT <- EnvStats::gofTest(LP, test = "ad")

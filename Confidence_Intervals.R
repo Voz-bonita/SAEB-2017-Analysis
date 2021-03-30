@@ -5,6 +5,7 @@
 
 library(ggplot2)
 
+source("Pop2000_data.R")
 # population <- read.csv("SAEB.sample.csv")
 
 # Hash that change boolena into Brazilian portuguese names
