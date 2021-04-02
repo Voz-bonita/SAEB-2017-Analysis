@@ -103,6 +103,6 @@ Anderson_LP <- EnvStats::gofTest(LP, test = "ad")
 
 
 MT <- sample30$NOTA_MT
-Shapiro_MT <- EnvStats::gofTest(LP, test = "sw")
-Lillie_MT <- EnvStats::gofTest(LP, test = "lillie", distribution = "norm")
-Anderson_MT <- EnvStats::gofTest(LP, test = "ad")
+Shapiro_MT <- EnvStats::gofTest(MT, test = "sw")
+Lillie_MT <- EnvStats::gofTest(MT, test = "lillie", distribution = "norm")
+Anderson_MT <- EnvStats::gofTest(MT, test = "ad")
