@@ -44,6 +44,7 @@ classification<- function(X){
 }
 
 classification <- Vectorize(classification)
+classification <- Vectorize(classification)
 
 ################# Question 1
 
@@ -76,7 +77,7 @@ var <- sum((Freq_dist$fi*(Freq_dist$Mid_W-193.25)^2))/99
 sd <- sqrt(var)
 
 inf_lim <- c(0) %>%
-  append(seq(125, 300, 25))
+  append(seq(125, 325, 25))
 
 sup_lim <- seq(125, 350, 25)
 
