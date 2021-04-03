@@ -98,11 +98,11 @@ Freq_dist
 
 LP <- sample30$NOTA_LP
 Shapiro_LP <- EnvStats::gofTest(LP, test = "sw")
-Lillie_LP <- EnvStats::gofTest(LP, test = "lillie", distribution = "norm")
+Lillie_LP <- EnvStats::gofTest(LP, test = "lillie", distribution = "norm", param.list = list(mean = mean(LP), sd = sd(LP)))
 Anderson_LP <- EnvStats::gofTest(LP, test = "ad")
 
 
 MT <- sample30$NOTA_MT
 Shapiro_MT <- EnvStats::gofTest(MT, test = "sw")
-Lillie_MT <- EnvStats::gofTest(MT, test = "lillie", distribution = "norm")
+Lillie_MT <- EnvStats::gofTest(MT, test = "lillie", distribution = "norm", param.list = list(mean = mean(MT), sd = sd(MT)))
 Anderson_MT <- EnvStats::gofTest(MT, test = "ad")
