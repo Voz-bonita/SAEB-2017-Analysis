@@ -16,14 +16,18 @@ ggplot(MT_LOC, aes(x = LOCAL, y = NOTA_MT, fill = LOCAL)) +
   guides(fill=guide_legend(title = "Localização"))
 # ggsave("MT_LOC.png")
 
+# Medidas de posicao
 
-
-
-
-
-
-
-
+tabela1 <- MT_LOC %>%
+  group_by(LOCAL) %>%
+  summarise(Media = mean(NOTA_MT),
+            Mediana = median(NOTA_MT),
+            Maior_nota = max(NOTA_MT),
+            Amplitude = (max(NOTA_MT)-min(NOTA_MT)),
+            Pri_Quartil = quantile(NOTA_MT, .25),
+            Seg_Quartil = quantile(NOTA_MT, .50),
+            Ter_Quartil = quantile(NOTA_MT, .75),
+            DesvioPadrao = sqrt(var(NOTA_MT)))
 
 LP_ADM <- tibble(
   NOTA_LP = population$NOTA_LP,
