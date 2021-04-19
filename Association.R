@@ -22,7 +22,6 @@ tabela1 <- MT_LOC %>%
   group_by(LOCAL) %>%
   summarise(Media = mean(NOTA_MT),
             Mediana = median(NOTA_MT),
-            Maior_nota = max(NOTA_MT),
             Amplitude = (max(NOTA_MT)-min(NOTA_MT)),
             Pri_Quartil = quantile(NOTA_MT, .25),
             Seg_Quartil = quantile(NOTA_MT, .50),
@@ -46,7 +45,6 @@ tabela2 <- LP_ADM %>%
   group_by(ADM) %>%
   summarise(Media = mean(NOTA_LP),
             Mediana = median(NOTA_LP),
-            Maior_nota = max(NOTA_LP),
             Amplitude = (max(NOTA_LP)-min(NOTA_LP)),
             Pri_Quartil = quantile(NOTA_LP, .25),
             Seg_Quartil = quantile(NOTA_LP, .50),
