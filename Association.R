@@ -42,3 +42,13 @@ ggplot(LP_ADM, aes(x = ADM, y = NOTA_LP, fill = ADM)) +
   guides(fill=guide_legend(title = "Dependência\nadministrativa"))
 # ggsave("LP_ADM.png")
 
+tabela2 <- LP_ADM %>%
+  group_by(ADM) %>%
+  summarise(Media = mean(NOTA_LP),
+            Mediana = median(NOTA_LP),
+            Maior_nota = max(NOTA_LP),
+            Amplitude = (max(NOTA_LP)-min(NOTA_LP)),
+            Pri_Quartil = quantile(NOTA_LP, .25),
+            Seg_Quartil = quantile(NOTA_LP, .50),
+            Ter_Quartil = quantile(NOTA_LP, .75),
+            DesvioPadrao = sqrt(var(NOTA_LP)))
