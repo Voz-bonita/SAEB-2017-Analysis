@@ -1,6 +1,8 @@
 library(dplyr)
 library(ggplot2)
 library(reshape2)
+library(twosamples)
+library(BSDA)
 
 population <- read.csv("SAEB.sample.csv")
 
@@ -146,3 +148,8 @@ ks.test(mtloc30x, mtloc30y)
 ks.test(mtloc100x, mtloc100y)
 ks.test(lpadm30x, lpadm30y)
 ks.test(lpadm100x, lpadm100y)
+
+
+t.test(sam30$NOTA_MT, sam30$NOTA_LP, paired = T, alternative = "greater")
+wilcox.test(sam30$NOTA_MT, sam30$NOTA_LP, paired = T, alternative = "greater")
+SIGN.test(sam30$NOTA_MT, sam30$NOTA_LP, alternative = "greater")
