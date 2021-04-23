@@ -1,5 +1,6 @@
 library(dplyr)
 library(ggplot2)
+library(reshape2)
 
 population <- read.csv("SAEB.sample.csv")
 
@@ -115,3 +116,33 @@ shapiro.test(mtloc30$notas)
 shapiro.test(mtloc100$notas)
 shapiro.test(lpadm30$notas)
 shapiro.test(lpadm100$notas)
+
+
+mtloc30$local <- recode(mtloc30$local, "1" = "Urbana", "2" = "Rural")
+mtloc100$local <- recode(mtloc100$local, "1" = "Urbana", "2" = "Rural")
+mtloc30x <- filter(mtloc30, local == "Urbana")$notas
+mtloc30y <- filter(mtloc30, local == "Rural")$notas
+mtloc100x <- filter(mtloc100, local == "Urbana")$notas
+mtloc100y <- filter(mtloc100, local == "Rural")$notas
+
+lpadm30$adm <- recode(lpadm30$adm, "2" = "Estadual+Federal", "3" = "Municipal")
+lpadm100$adm <- recode(lpadm100$adm, "2" = "Estadual+Federal", "3" = "Municipal")
+lpadm30x <- filter(lpadm30, adm == "Estadual+Federal")$notas
+lpadm30y <- filter(lpadm30, adm == "Municipal")$notas
+lpadm100x <- filter(lpadm100, adm == "Estadual+Federal")$notas
+lpadm100y <- filter(lpadm100, adm == "Municipal")$notas
+
+t.test(mtloc30x, mtloc30y, var.equal = T)
+t.test(mtloc100x, mtloc100y, var.equal = T)
+t.test(lpadm30x, lpadm30y, var.equal = T)
+t.test(lpadm100x, lpadm100y, var.equal = T)
+
+wilcox.test(mtloc30x, mtloc30y)
+wilcox.test(mtloc100x, mtloc100y)
+wilcox.test(lpadm30x, lpadm30y)
+wilcox.test(lpadm100x, lpadm100y)
+
+ks.test(mtloc30x, mtloc30y)
+ks.test(mtloc100x, mtloc100y)
+ks.test(lpadm30x, lpadm30y)
+ks.test(lpadm100x, lpadm100y)
