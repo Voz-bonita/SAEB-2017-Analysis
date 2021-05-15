@@ -20,13 +20,24 @@ amostra <- read.csv("SAEB.sample.csv") %>%
 
 ## Corrigindo Labels
 # TRUE = Defasagem
-amostra$IDADE <- amostra$IDADE > "D"
+amostra$IDADE <- as.character(amostra$IDADE > "D") %>%
+  recode("FALSE" = "Não tem defasagem", "TRUE" = "Tem defasagem")
 
+amostra$SEXO <- recode(amostra$SEXO, "A"="Masculino", "B"="Feminino")
+
+amostra$RACA_COR <- recode(amostra$RACA_COR, "A"="Branca", "B"="Preta",
+                           "C"="Parda", "D"="Amarela",
+                           "E"="Indígena", "F"="Não quero declarar")
 
 amostra$REGIAO <- amostra$REGIAO %>%
   factor(levels = c("1","2","3","4","5")) %>%
   recode("1"="Norte", "2"="Nordeste", "3"="Sudeste", "4"="Sul", "5"="Centro-Oeste")
 
+amostra$AFAZERES_DOM <- recode(amostra$AFAZERES_DOM, "A"="Menos de 1 hora",
+                               "B"="Entre 1 e 2 horas", "C"="Mais de 2 horas, até 3 horas",
+                               "D"="Mais de 3 horas", "E"="Não faço trabalhos domésticos")
+
+# write.csv(amostra, "Artigo_amostra.csv", row.names=FALSE)
 
 Reg_Sexo <- amostra[c("NOTA_MT", "AFAZERES_DOM", "REGIAO", "SEXO")]
 
