@@ -44,7 +44,25 @@ amostra$AFAZERES_DOM <- recode(amostra$AFAZERES_DOM, "A"="Menos de 1 hora",
 Reg_Sexo <- amostra[c("NOTA_MT", "AFAZERES_DOM", "REGIAO", "SEXO")]
 
 
-## Normalidade
+### Normalidade
+## Preparacao para o grafico
+# Decisao do intervalo
+min(Reg_Sexo$NOTA_MT)
+max(Reg_Sexo$NOTA_MT)
+
+# Notas agrupadas
+notas_intervalares <- table(cut(Reg_Sexo$NOTA_MT, breaks = seq(125,325,25)))
+notas_df <- tibble(
+  Notas = names(notas_intervalares),
+  freq = as.vector(notas_intervalares)
+)
+
+ggplot(notas_df, aes(x = Notas, y = freq)) +
+  geom_col(color = "green", fill = "blue") +
+  ylab("Frequencia") +
+  theme_bw()
+# ggsave("MTNORM.png")
+
 shapiro.test(Reg_Sexo$NOTA_MT)
 
 ## Homocedasticidade
