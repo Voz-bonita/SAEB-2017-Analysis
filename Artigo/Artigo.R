@@ -25,9 +25,11 @@ amostra$IDADE <- as.character(amostra$IDADE > "D") %>%
 
 amostra$SEXO <- recode(amostra$SEXO, "A"="Masculino", "B"="Feminino")
 
-amostra$RACA_COR <- recode(amostra$RACA_COR, "A"="Branca", "B"="Preta",
-                           "C"="Parda", "D"="Amarela",
-                           "E"="Indígena", "F"="Não quero declarar")
+amostra$RACA_COR <- amostra$RACA_COR %>%
+  recode("E"="D", "F"="D") %>%
+  factor(levels = c("A","B","C","D")) %>%
+  recode("A"="Branca", "B"="Preta",
+         "C"="Parda", "D"="Outros")
 
 amostra$REGIAO <- amostra$REGIAO %>%
   factor(levels = c("1","2","3","4","5")) %>%
@@ -43,8 +45,6 @@ amostra$AFAZERES_DOM <- recode(amostra$AFAZERES_DOM, "A"="Menos de 1 hora",
 #### Regiao
 Reg_Sexo <- amostra[c("NOTA_MT", "AFAZERES_DOM", "REGIAO", "SEXO")]
 
-
-### Normalidade
 ## Preparacao para o grafico
 # Decisao do intervalo
 min(Reg_Sexo$NOTA_MT)
@@ -102,8 +102,8 @@ summary(anova)
 ggplot(Reg_Sexo, aes(x=SEXO, y=NOTA_MT, fill=SEXO)) +
   geom_boxplot(width = 0.5) +
   stat_summary(fun="mean", geom="point", shape=23, size=3, fill="white") +
-  guides(fill = guide_legend(title = "Região")) +
-  labs(x="Região", y="Notas") +
+  guides(fill = guide_legend(title = "Sexo")) +
+  labs(x="Sexo", y="Notas") +
   theme_bw()
 # ggsave("Artigo/MT_X_SEXO.png")
 
@@ -114,3 +114,21 @@ SEXO_AFAZERES <- Reg_Sexo %>%
   dcast(AFAZERES_DOM ~ SEXO)
 
 chisq.test(SEXO_AFAZERES[c("Feminino", "Masculino")])
+
+
+#### Raca_cor
+## Homocedasticidade
+bartlett.test(amostra$NOTA_MT ~ amostra$RACA_COR)
+
+## ANOVA
+anova <- aov(amostra$NOTA_MT ~ amostra$RACA_COR)
+summary(anova)
+
+## Grafico
+ggplot(amostra, aes(x=RACA_COR, y=NOTA_MT, fill=RACA_COR)) +
+  geom_boxplot(width = 0.5) +
+  stat_summary(fun="mean", geom="point", shape=23, size=3, fill="white") +
+  guides(fill = guide_legend(title = "Raça/Cor")) +
+  labs(x="Raça/Cor", y="Notas") +
+  theme_bw()
+# ggsave("MT_RACA.png")
