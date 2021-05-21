@@ -1,5 +1,5 @@
 library(pacman)
-p_load(dplyr, tibble, DescTools, ggplot2, PMCMR, tidyr, reshape2)
+p_load(dplyr, tibble, DescTools, ggplot2, PMCMR, tidyr, reshape2, purrr)
 
 
 # Os dados tem observacoes faltantes em forma de " "
@@ -89,7 +89,6 @@ ggplot(Reg_Sexo, aes(x=REGIAO, y=NOTA_MT, fill=REGIAO)) +
 
 #### Sexo
 
-# shapiro.test(filter(Reg_Sexo, SEXO == "Masculino")$NOTA_MT)$p.value
 ## Homocedasticidade
 bartlett.test(Reg_Sexo$NOTA_MT ~ Reg_Sexo$SEXO)
 
@@ -117,6 +116,20 @@ chisq.test(SEXO_AFAZERES[c("Feminino", "Masculino")])
 
 
 #### Raca_cor
+
+## Descritiva
+descritivas <- amostra %>%
+  group_by(RACA_COR) %>%
+  summarise(Media = mean(NOTA_MT),
+            Mediana = median(NOTA_MT),
+            Amplitude = (max(NOTA_MT)-min(NOTA_MT)),
+            Pri_Quartil = quantile(NOTA_MT, .25),
+            Seg_Quartil = quantile(NOTA_MT, .50),
+            Ter_Quartil = quantile(NOTA_MT, .75),
+            DesvioPadrao = sqrt(var(NOTA_MT)),
+            Coef_var = DesvioPadrao/Media*100)
+t(descritivas)
+
 ## Homocedasticidade
 bartlett.test(amostra$NOTA_MT ~ amostra$RACA_COR)
 
@@ -132,3 +145,31 @@ ggplot(amostra, aes(x=RACA_COR, y=NOTA_MT, fill=RACA_COR)) +
   labs(x="Raça/Cor", y="Notas") +
   theme_bw()
 # ggsave("MT_RACA.png")
+
+
+#### Idade
+## Homocedasticidade
+bartlett.test(amostra$NOTA_MT ~ amostra$IDADE)
+
+## ANOVA
+anova <- aov(amostra$NOTA_MT ~ amostra$IDADE)
+summary(anova)
+
+IDA <- amostra %>%
+  group_by(IDADE) %>%
+  count(AFAZERES_DOM) %>%
+  dcast(AFAZERES_DOM ~ IDADE)
+
+IDA[is.na(IDA)] <- 0
+
+
+## Grafico
+ggplot(amostra, aes(x=IDADE, y=NOTA_MT, fill=IDADE)) +
+  geom_boxplot(width = 0.5) +
+  stat_summary(fun="mean", geom="point", shape=23, size=3, fill="white") +
+  guides(fill = guide_legend(title = "Idade")) +
+  labs(x="Idade", y="Notas") +
+  theme_bw()
+# ggsave("MT_IDADE.png")
+
+
